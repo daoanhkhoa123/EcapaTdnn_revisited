@@ -12,6 +12,17 @@ class AAAMSoftmax_config:
     m:int
     s:int
 
+class ClassificationLoss(nn.Module):
+    def __init__(self, config:AAAMSoftmax_config) -> None:
+        super().__init__()
+        self.fc =nn.Linear(config.embed_dim, config.n_class, bias=False)
+        self.loss = nn.CrossEntropyLoss()
+
+    def forward(self, x, label):
+        x = self.fc(x)
+        loss = self.loss(x, label)
+        return loss
+
 class AAMSoftmax(nn.Module):
     def __init__(self, config:AAAMSoftmax_config) -> None:
         super().__init__()
