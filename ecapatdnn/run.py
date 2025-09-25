@@ -135,6 +135,7 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
             optimizer.zero_grad()
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
+            print(data.shape)
             embedding = model(data)
             print(embedding)
             
