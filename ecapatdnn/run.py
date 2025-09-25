@@ -112,7 +112,7 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     loss_fn = AAMSoftmax(loss_config).to(train_config.device)
     
     
-    inp =   torch.randn(2, 16000)  # 1-second examples
+    inp =   torch.randn(2, 16000, device=train_config.device)  # 1-second examples
     out = model(inp)
     print(out.shape)  # 
 
