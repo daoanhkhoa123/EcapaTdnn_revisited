@@ -5,7 +5,7 @@ from datetime import datetime
 
 import torch
 
-from .dataloader import VSAVSDataset_SpkerEmbed, VSAVSDataloader_config
+from .dataloader import VSAVSDataset_SpkerEmbed, VSAVSDataloader_config, collate_fn
 from .loss import AAAMSoftmax_config, AAMSoftmax
 from .model import Ecapa_Tdnn, Ecapa_dim
 
@@ -121,7 +121,8 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     
     dataset = VSAVSDataset_SpkerEmbed(data_config)
     loader = torch.utils.data.DataLoader(dataset, batch_size=train_config.batch_size,
-                                         shuffle=True, num_workers=2, drop_last=True)
+                                         shuffle=True, num_workers=2, drop_last=True,
+                                         collate_fn=collate_fn)
 
     loss_stats = 0
     acc = 0
