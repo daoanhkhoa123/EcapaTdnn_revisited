@@ -153,7 +153,7 @@ if __name__ == "__main__":
     train_config, data_config, model_config, loss_config = setup_config(parser)
     log_file = setup_logger()
 
-    m = Ecapa_Tdnn(model_config)
+    m = Ecapa_Tdnn(Ecapa_dim(1024, 768))
     inp = torch.randn(2, 16000)  # 1-second examples
     out = m(inp)
     print(out.shape)  # expect [2, 1024]
