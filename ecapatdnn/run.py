@@ -126,7 +126,6 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     model.train()
     for epoch in range(1, train_config.epochs + 1):
         scheduler.step(epoch-1)
-        total_loss, total_correct, total_samples = 0.0, 0, 0
         pbar = tqdm(loader, total=len(loader), desc=f"Epoch {epoch}/{train_config.epochs}")
 
         for data, labels in pbar:
@@ -142,17 +141,14 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
             # stats
             preds = torch.argmax(logits, dim=1)
             correct = (preds == labels).sum().item()
-            total_correct += correct
-            total_samples += labels.size(0)
-            total_loss += loss.item()
-
-            acc = 100.0 * total_correct / total_samples
-            pbar.set_postfix({"loss": total_loss / total_samples,
+            acc = 100 * correct / len(preds)
+            loss_stats = loss.item()
+            pbar.set_postfix({"loss": loss_stats,
                               "acc": f"{acc:.2f}%"})
 
         scheduler.step()
-        logging.info(f"[Epoch {epoch}] Loss={total_loss/total_samples:.4f}, "
-                    f"Acc={100*total_correct/total_samples:.2f}%")
+        logging.info(f"[Epoch {epoch}] Loss={loss_stats:.4f}, " # type: ignore
+                    f"Acc={acc:.2f}%") # type: ignore
 
     return model, loss_fn
 
