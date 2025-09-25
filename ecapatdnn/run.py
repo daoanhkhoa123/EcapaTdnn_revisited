@@ -111,6 +111,11 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     model = Ecapa_Tdnn(model_config).to(train_config.device)
     loss_fn = AAMSoftmax(loss_config).to(train_config.device)
     
+    
+    inp =   torch.randn(2, 16000)  # 1-second examples
+    out = model(inp)
+    print(out.shape)  # 
+
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Trainable parameters: {trainable_params:,}")
