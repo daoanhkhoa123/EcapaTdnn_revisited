@@ -124,28 +124,22 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
                                          shuffle=True, num_workers=2, drop_last=True,
                                          collate_fn=collate_fn)
 
-    loss_stats = 0
-    acc = 0
+    loss = torch.zeros([])
     model.train()
     for epoch in range(1, train_config.epochs + 1):
-        pbar = tqdm(loader, total=len(loader), desc=f"Epoch {epoch}/{train_config.epochs}")
+        pbar = tqdm(loader, total=len(loader), desc=f"Epoch {epoch}/{train_config.epochs} Loss {loss.item():.4f}")
 
         for data, labels in pbar:
             data, labels = data.to(train_config.device), labels.to(train_config.device)
 
             optimizer.zero_grad()
             loss = loss_fn(model(data), labels)
-
-            # backward
             loss.backward()
             optimizer.step()
 
-            # stats
-            loss_stats = loss.item()
-            pbar.set_postfix({"loss": loss_stats})
 
         scheduler.step()
-        logging.info(f"[Epoch {epoch}] Loss={loss_stats:.4f} ") # type: iignore)
+        logging.info(f"[Epoch {epoch}] Loss={loss.item()} ") # type: iignore)
 
     return model, loss_fn
 
