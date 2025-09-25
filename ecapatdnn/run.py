@@ -136,6 +136,7 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
             print(data.shape)
+            data = torch.rand(data.shape, device=train_config.device)
             print("-------------")
             print(data)
             embedding = model(data)
