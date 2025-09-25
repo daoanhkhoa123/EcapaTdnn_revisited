@@ -116,7 +116,7 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     print("aaaTasaaaaaaaaaa")
 
     model = Ecapa_Tdnn(model_config).to(train_config.device)
-    loss_fn = AAMSoftmax(loss_config).to(train_config.device)
+    # loss_fn = AAMSoftmax(loss_config).to(train_config.device)
     inp = torch.randn(2, 16000).to(train_config.device)
     out = model(inp)
     print(out.shape)  # 
