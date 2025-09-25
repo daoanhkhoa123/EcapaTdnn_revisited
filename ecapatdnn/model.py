@@ -122,9 +122,9 @@ class Ecapa_Tdnn(nn.Module):
             nn.Softmax(dim=2),
         )
         self.conv2 = nn.Sequential(
-            nn.BatchNorm1d(3072),
             nn.Linear(3072, ecapa_dim.embed_dim),
-            nn.LayerNorm(ecapa_dim.embed_dim)
+            nn.GELU(),
+            nn.Linear(ecapa_dim.embed_dim, ecapa_dim.embed_dim),
         )
 
     def forward(self, x:torch.Tensor):
