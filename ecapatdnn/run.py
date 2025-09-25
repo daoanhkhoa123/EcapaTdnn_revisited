@@ -2,6 +2,7 @@ from dataclasses import dataclass, asdict
 import logging, argparse, os
 from tqdm import tqdm
 from datetime import datetime
+import pandas as pd
 
 import torch
 
@@ -27,7 +28,9 @@ def setup():
                         help="Path to metadata CSV")
     parser.add_argument("--data_prefix_path", type=str, required=True,
                         help="Root folder where audio files are stored")
-    
+    parser.add_argument("--bondafide_only", type=bool, default=True)
+    parser.add_argument("--augument", type=bool,  default=True)
+
     # training config
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=32)
@@ -53,8 +56,8 @@ def setup_config(parser: argparse.ArgumentParser):
     data_config = VSAVSDataloader_config(
         df_path=args.df_path,
         data_prefix_path=args.data_prefix_path,
-        bonafide_only=True,
-        augument=True
+        bonafide_only=args.bondafide_only,
+        augument=args.augument
     )
 
     model_config = Ecapa_dim(
@@ -63,7 +66,6 @@ def setup_config(parser: argparse.ArgumentParser):
     )
 
     # speaker count from df
-    import pandas as pd
     n_class = len(pd.read_csv(args.df_path)["speaker_id_num"].unique())
 
     loss_config = AAAMSoftmax_config(
@@ -130,10 +132,12 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
         pbar = tqdm(loader, total=len(loader), desc=f"Epoch {epoch}/{train_config.epochs} Loss {loss.item():.4f}")
 
         for data, labels in pbar:
-            data, labels = data.to(train_config.device), labels.to(train_config.device)
-
             optimizer.zero_grad()
-            loss = loss_fn(model(data), labels)
+
+            data, labels = data.to(train_config.device), labels.to(train_config.device)
+            embedding = model(data)
+            print(embedding)
+            loss = loss_fn(embedding, labels)
             loss.backward()
             optimizer.step()
 
