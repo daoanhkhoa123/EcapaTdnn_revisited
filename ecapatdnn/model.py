@@ -124,7 +124,7 @@ class Ecapa_Tdnn(nn.Module):
         self.conv2 = nn.Sequential(
             nn.BatchNorm1d(3072),
             nn.Linear(3072, ecapa_dim.embed_dim),
-            nn.BatchNorm1d(ecapa_dim.embed_dim)
+            nn.LayerNorm(ecapa_dim.embed_dim)
         )
 
     def forward(self, x:torch.Tensor):
@@ -157,6 +157,6 @@ class Ecapa_Tdnn(nn.Module):
     
 if __name__ == "__main__":
     m = Ecapa_Tdnn(Ecapa_dim(hidden_dim=512, embed_dim=1024))
-    inp = torch.randn(2, 16000)  # 1-second examples
+    inp = torch.randn(1, 103200)  # 1-second examples
     out = m(inp)
     print(out.shape)  # expect [2, 1024]
