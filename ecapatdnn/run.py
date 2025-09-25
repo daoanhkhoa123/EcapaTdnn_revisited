@@ -121,13 +121,12 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
     
     dataset = VSAVSDataset_SpkerEmbed(data_config)
     loader = torch.utils.data.DataLoader(dataset, batch_size=train_config.batch_size,
-                                         shuffle=True, num_workers=4, drop_last=True)
+                                         shuffle=True, num_workers=2, drop_last=True)
 
     loss_stats = 0
     acc = 0
     model.train()
     for epoch in range(1, train_config.epochs + 1):
-        scheduler.step(epoch-1)
         pbar = tqdm(loader, total=len(loader), desc=f"Epoch {epoch}/{train_config.epochs}")
 
         for data, labels in pbar:
