@@ -137,10 +137,11 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
             data, labels = data.to(train_config.device), labels.to(train_config.device)
             embedding = model(data)
             print(embedding)
+            
             loss = loss_fn(embedding, labels)
             loss.backward()
             optimizer.step()
-
+            raise ValueError()
 
         scheduler.step()
         logging.info(f"[Epoch {epoch}] Loss={loss.item()} ") # type: iignore)
