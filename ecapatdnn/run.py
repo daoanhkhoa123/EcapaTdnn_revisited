@@ -108,7 +108,7 @@ def log_configs(model_cfg, loss_cfg, train_cfg):
         logging.info(f"{k}: {v}")
 
 def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_config:Ecapa_dim, loss_config:AAAMSoftmax_config):
-    model = Ecapa_Tdnn(Ecapa_dim(1024, 768)).to(train_config.device)
+    model = Ecapa_Tdnn(model_config).to(train_config.device)
     loss_fn = AAMSoftmax(loss_config).to(train_config.device)
 
     total_params = sum(p.numel() for p in model.parameters())
@@ -135,7 +135,7 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
             optimizer.zero_grad()
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
-            data = torch.rand(data.shape, device=train_config.device)
+            print(data.shape)
             embedding = model(data)
             
             loss = loss_fn(embedding, labels)
@@ -145,7 +145,6 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
         scheduler.step()
         logging.info(f"[Epoch {epoch}] Loss={loss.item()} ") # type: iignore)
 
-        raise ValueError()
     return model, loss_fn
 
 
