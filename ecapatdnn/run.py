@@ -134,23 +134,18 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
             data, labels = data.to(train_config.device), labels.to(train_config.device)
 
             optimizer.zero_grad()
-            loss, logits = loss_fn(model(data), labels)
+            loss = loss_fn(model(data), labels)
 
             # backward
             loss.backward()
             optimizer.step()
 
             # stats
-            preds = torch.argmax(logits, dim=1)
-            correct = (preds == labels).sum().item()
-            acc = 100 * correct / len(preds)
             loss_stats = loss.item()
-            pbar.set_postfix({"loss": loss_stats,
-                              "acc": f"{acc:.2f}%"})
+            pbar.set_postfix({"loss": loss_stats})
 
         scheduler.step()
-        logging.info(f"[Epoch {epoch}] Loss={loss_stats:.4f}, " # type: ignore
-                    f"Acc={acc:.2f}%") # type: ignore
+        logging.info(f"[Epoch {epoch}] Loss={loss_stats:.4f} ") # type: iignore)
 
     return model, loss_fn
 
