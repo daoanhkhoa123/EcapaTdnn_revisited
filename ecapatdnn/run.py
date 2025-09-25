@@ -154,6 +154,10 @@ if __name__ == "__main__":
     log_file = setup_logger()
     print(model_config)
     assert model_config == Ecapa_dim(1024, 768)
+    m = Ecapa_Tdnn(model_config)
+    inp = torch.randn(2, 16000)  # 1T-second examples
+    out = m(inp)
+    print(out.shape)  # expect [2, 1024]
     raise ValueError()
 
 
