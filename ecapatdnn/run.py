@@ -136,7 +136,9 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
             embedding = model(data)
+            print(embedding.shape, labels.shape)
             loss = loss_fn(embedding, labels)
+            print("aaaaaaaaaaa")
             loss.backward()
             optimizer.step()
 
