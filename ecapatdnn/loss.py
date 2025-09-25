@@ -19,6 +19,7 @@ class ClassificationLoss(nn.Module):
         self.loss = nn.CrossEntropyLoss()
 
     def forward(self, x, label):
+        x = fn.normalize(x, 2,1)
         x = self.fc(x)
         loss = self.loss(x, label)
         return loss

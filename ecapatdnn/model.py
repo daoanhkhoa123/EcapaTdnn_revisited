@@ -125,6 +125,7 @@ class Ecapa_Tdnn(nn.Module):
             nn.Linear(3072, ecapa_dim.embed_dim),
             nn.GELU(),
             nn.Linear(ecapa_dim.embed_dim, ecapa_dim.embed_dim),
+            nn.LayerNorm(ecapa_dim.embed_dim)
         )
 
     def forward(self, x:torch.Tensor):
