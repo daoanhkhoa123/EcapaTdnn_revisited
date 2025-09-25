@@ -136,7 +136,10 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
             print(data.shape)
+            print("-------------")
+            print(data)
             embedding = model(data)
+            print("aaaa")
             print(embedding)
             
             loss = loss_fn(embedding, labels)
