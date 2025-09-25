@@ -136,7 +136,7 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
             inp = torch.randn(data.shape)  # 1-second examples
-            out = m(inp)
+            out = model(inp)
             print(out.shape)  # expect [2, 1024]
             print("aaaaaaaaaaaaaaaa")
             embedding = model(data)
