@@ -135,8 +135,6 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
             optimizer.zero_grad()
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
-            print(data.shape)
-            m = Ecapa_Tdnn(Ecapa_dim(hidden_dim=1024, embed_dim=768))
             inp = torch.randn(data.shape)  # 1-second examples
             out = m(inp)
             print(out.shape)  # expect [2, 1024]
