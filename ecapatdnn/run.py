@@ -107,20 +107,9 @@ def log_configs(model_cfg, loss_cfg, train_cfg):
     for k, v in asdict(loss_cfg).items():
         logging.info(f"{k}: {v}")
 
-def train(train_config: Train_config, data_config, model_config, loss_config):
-    print(model_config)
-    m = Ecapa_Tdnn(model_config)
-    inp = torch.randn(2, 16000)  # 1-second examples
-    out = m(inp)
-    print(out.shape)  # 
-    print("aaaTasaaaaaaaaaa")
-
+def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_config:Ecapa_dim, loss_config:AAAMSoftmax_config):
     model = Ecapa_Tdnn(model_config).to(train_config.device)
     loss_fn = AAMSoftmax(loss_config).to(train_config.device)
-    inp = torch.randn(2, 16000).to(train_config.device)
-    out = model(inp)
-    print(out.shape)  # 
-    raise ValueError()
 
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -146,18 +135,12 @@ def train(train_config: Train_config, data_config, model_config, loss_config):
             optimizer.zero_grad()
 
             data, labels = data.to(train_config.device), labels.to(train_config.device)
-            print(data.shape)
             data = torch.rand(data.shape, device=train_config.device)
-            print("-------------")
-            print(data)
             embedding = model(data)
-            print("aaaa")
-            print(embedding)
             
             loss = loss_fn(embedding, labels)
             loss.backward()
             optimizer.step()
-            raise ValueError()
 
         scheduler.step()
         logging.info(f"[Epoch {epoch}] Loss={loss.item()} ") # type: iignore)
@@ -169,6 +152,13 @@ if __name__ == "__main__":
     parser = setup()
     train_config, data_config, model_config, loss_config = setup_config(parser)
     log_file = setup_logger()
+
+    m = Ecapa_Tdnn(model_config)
+    inp = torch.randn(2, 16000)  # 1-second examples
+    out = m(inp)
+    print(out.shape)  # expect [2, 1024]
+    raise ValueError()
+
 
     log_configs(model_config, loss_config, train_config)
     logging.info(f"Logging to {log_file}")
