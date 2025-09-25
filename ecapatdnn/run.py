@@ -5,9 +5,9 @@ from datetime import datetime
 
 import torch
 
-from dataloader import VSAVSDataset_SpkerEmbed, VSAVSDataloader_config
-from loss import AAAMSoftmax_config, AAMSoftmax
-from model import Ecapa_Tdnn, Ecapa_dim
+from .dataloader import VSAVSDataset_SpkerEmbed, VSAVSDataloader_config
+from .loss import AAAMSoftmax_config, AAMSoftmax
+from .model import Ecapa_Tdnn, Ecapa_dim
 
 
 @dataclass
