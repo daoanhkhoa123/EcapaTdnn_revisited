@@ -85,7 +85,6 @@ class VSAVSDataset_SpkerEmbed(Dataset):
 
 def collate_fn(batch):
     audios, labels = zip(*batch)
-    lengths = [a.shape[0] for a in audios]
     audios_padded = rnn_utils.pad_sequence(audios, batch_first=True) # type: ignore
     labels = torch.tensor(labels, dtype=torch.long)
-    return audios_padded, lengths, labels
+    return audios_padded, labels
