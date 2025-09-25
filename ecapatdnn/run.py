@@ -108,6 +108,7 @@ def log_configs(model_cfg, loss_cfg, train_cfg):
         logging.info(f"{k}: {v}")
 
 def train(train_config: Train_config, data_config, model_config, loss_config):
+    print(model_config)
     model = Ecapa_Tdnn(model_config)#.to(train_config.device)
     loss_fn = AAMSoftmax(loss_config).to(train_config.device)
     inp = torch.randn(2, 16000)  
