@@ -140,9 +140,9 @@ def train(train_config: Train_config, data_config:VSAVSDataloader_config, model_
             inp = torch.randn(data.shape)  # 1-second examples
             out = m(inp)
             print(out.shape)  # expect [2, 1024]
-
+            print("aaaaaaaaaaaaaaaa")
             embedding = model(data)
-            
+            print("aaaaaaaaaaaaaaaa")
             loss = loss_fn(embedding, labels)
             loss.backward()
             optimizer.step()
