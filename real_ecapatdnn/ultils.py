@@ -9,7 +9,7 @@ def load_parameters(self, path):
     for name, param in loaded_state.items():
         origname = name
         if name not in self_state:
-            name = name.replace("module.", "")
+            name = name.replace("module.", "").replace("speaker_encoder.", "")
             if name not in self_state:
                 print("%s is not in the model."%origname)
                 continue
