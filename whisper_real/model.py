@@ -246,6 +246,7 @@ class Whisper(nn.Module):
         self.register_buffer("alignment_heads", mask.to_sparse(), persistent=False)
 
     def forward(self, input: torch.Tensor):
+        print("presorpesoeosfcesp")
         input = self.preprocessing(input)
         print("aaaaaaaaaaaaaaa")
         return self.encoder(input)
