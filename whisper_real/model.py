@@ -215,6 +215,14 @@ class PreEmphasis(torch.nn.Module):
         input = F.pad(input, (1, 0), 'reflect')
         return F.conv1d(input, self.flipped_filter).squeeze(1)
     
+class StatsPooling(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):  # x: [B, T, D]
+        mean = x.mean(dim=1)
+        std = x.std(dim=1)
+        return torch.cat([mean, std], dim=1)  # [B, 2*D]
 
 
 class Whisper(nn.Module):
@@ -235,6 +243,11 @@ class Whisper(nn.Module):
             self.dims.n_audio_head,
             self.dims.n_audio_layer,
         )
+
+        self.mlp = torch.nn.Sequential(
+            StatsPooling(),
+            nn.Linear(self.dims.n_audio_state*2, self.dims.n_audio_state)
+        )
         
     def set_alignment_heads(self, dump: bytes):
         array = np.frombuffer(
@@ -246,10 +259,11 @@ class Whisper(nn.Module):
         self.register_buffer("alignment_heads", mask.to_sparse(), persistent=False)
 
     def forward(self, input: torch.Tensor):
-        print("presorpesoeosfcesp")
         input = self.preprocessing(input)
-        print("aaaaaaaaaaaaaaa")
-        return self.encoder(input)
+        input = self.encoder(input)
+        input = self.mlp(input)
+        input = F.normalize(input, dim=1)
+        return input
 
     @property
     def device(self):
