@@ -8,41 +8,6 @@ from torch.utils.data import Dataset
 import torch.nn.utils.rnn as rnn_utils
 import pandas as pd
 
-class FbankAug(nn.Module):
-    def __init__(self, freq_mask_width = (0,8), time_mask_width =(0,10)) -> None:
-        super().__init__()
-        self.freq_mask_width = freq_mask_width
-        self.time_mask_width = time_mask_width
-    
-    def mask_along_axis(self, x:torch.Tensor, dim):
-        origin_size = x.shape
-        bsize, ftdim, time = x.shape
-        if dim == 1:
-            dee = ftdim
-            width_range = self.freq_mask_width
-        else:
-            dee = time
-            width_range = self.time_mask_width
-
-        mask_len = torch.randint(*width_range, size=(bsize, 1), 
-                            device=x.device).unsqueeze(2)
-        mask_pos = torch.randint(0, int(max(1, dee - mask_len.max())), size=(bsize,1),
-                                 device=x.device).unsqueeze(2)
-        arange  = torch.arange(dee, device=x.device).view(1,1,-1)
-        
-        mask = (mask_pos <= arange) * (arange < (mask_pos+mask_len))
-        mask =  mask.any(dim=1)
-        mask = mask.unsqueeze(2) if dim==1 else mask.unsqueeze(1)
-
-        x = x.masked_fill_(mask, 0.0)
-        return x.view(*origin_size)
-    
-    def forward(self, x:torch.Tensor):
-        with torch.no_grad():
-            x  =  self.mask_along_axis(x, dim=2)
-            x = self.mask_along_axis(x, dim=1)
-            return x
-    
 @dataclass
 class VSAVSDataloader_config:
     df_path:str
