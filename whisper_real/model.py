@@ -247,19 +247,13 @@ class Whisper(nn.Module):
 
     def forward(self, input: torch.Tensor):
         input = self.preprocessing(input)
+        print("aaaaaaaaaaaaaaa")
         return self.encoder(input)
 
     @property
     def device(self):
         return next(self.parameters()).device
 
-    @property
-    def is_multilingual(self):
-        return self.dims.n_vocab >= 51865
-
-    @property
-    def num_languages(self):
-        return self.dims.n_vocab - 51765 - int(self.is_multilingual)
 
     def install_kv_cache_hooks(self, cache: Optional[dict] = None):
         """
