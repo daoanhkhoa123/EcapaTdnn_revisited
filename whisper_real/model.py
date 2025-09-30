@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Dict, Iterable, Optional, Tuple
 
+import torchaudio
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -200,11 +201,33 @@ class AudioEncoder(nn.Module):
         return x
 
 
+class PreEmphasis(torch.nn.Module):
+
+    def __init__(self, coef: float = 0.97):
+        super().__init__()
+        self.coef = coef
+        self.register_buffer(
+            'flipped_filter', torch.FloatTensor([-self.coef, 1.]).unsqueeze(0).unsqueeze(0)
+        )
+
+    def forward(self, input: torch.tensor) -> torch.tensor:
+        input = input.unsqueeze(1)
+        input = F.pad(input, (1, 0), 'reflect')
+        return F.conv1d(input, self.flipped_filter).squeeze(1)
+    
+
 
 class Whisper(nn.Module):
     def __init__(self, dims: ModelDimensions):
         super().__init__()
         self.dims = dims
+
+        self.preprocessing = torch.nn.Sequential(
+            PreEmphasis(),            
+            torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_fft=512, win_length=400, hop_length=160, \
+                                                 f_min = 20, f_max = 7600, window_fn=torch.hamming_window, n_mels=80),
+            )
+
         self.encoder = AudioEncoder(
             self.dims.n_mels,
             self.dims.n_audio_ctx,
@@ -222,14 +245,9 @@ class Whisper(nn.Module):
         )
         self.register_buffer("alignment_heads", mask.to_sparse(), persistent=False)
 
-    def embed_audio(self, mel: torch.Tensor):
-        return self.encoder(mel)
-
-    def logits(self, tokens: torch.Tensor, audio_features: torch.Tensor):
-        return self.decoder(tokens, audio_features)
-
-    def forward(self, mel: torch.Tensor):
-        return self.encoder(mel)
+    def forward(self, input: torch.Tensor):
+        input = self.preprocessing(input)
+        return self.encoder(input)
 
     @property
     def device(self):
